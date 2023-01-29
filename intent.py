@@ -1,5 +1,3 @@
-from pprint import pprint
-
 import environs
 import google.cloud.dialogflow_v2 as dialogflow
 import requests
