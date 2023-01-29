@@ -1,9 +1,17 @@
+import logging
 import random
-import environs
-import vk_api as vk
-import google.cloud.dialogflow_v2 as dialogflow
 
-from vk_api.longpoll import VkLongPoll, VkEventType
+import environs
+import google.cloud.dialogflow_v2 as dialogflow
+import vk_api as vk
+from vk_api.longpoll import VkEventType, VkLongPoll
+
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+
+logger = logging.getLogger(__name__)
 
 
 def receive_message(vk_token, session_id, project_id):
@@ -40,8 +48,6 @@ def detect_intent_texts(session_id, text, language_code, project_id):
     return answer
 
 
-
-
 def send_message(user_id, text, vk_token):
     vk_session = vk.VkApi(token=vk_token)
     vk_api = vk_session.get_api()
@@ -61,15 +67,25 @@ if __name__ == "__main__":
     session_id = '1234567'
 
     while True:
-        answer, user_id = receive_message(
-            vk_token=vk_token,
-            session_id=session_id,
-            project_id=project_id
-        )
-        if not answer:
-            pass
-        else:
+        try:
+            answer, user_id = receive_message(
+                vk_token=vk_token,
+                session_id=session_id,
+                project_id=project_id
+            )
+            if not answer:
+                pass
+            else:
+                send_message(
+                    user_id=user_id,
+                    text=answer,
+                    vk_token=vk_token)
+        except:
+            vk_session = vk.VkApi(token=vk_token)
+            longpoll = VkLongPoll(vk_session)
+            for event in longpoll.listen():
+                user_id = event.user_id
             send_message(
                 user_id=user_id,
-                text=answer,
+                text=logger.exception('detect intent not working'),
                 vk_token=vk_token)

@@ -1,14 +1,14 @@
 import logging
-import environs
-import google.cloud.dialogflow_v2 as dialogflow
-
-from telegram import Update, ForceReply
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-from pprint import pprint
 from textwrap import dedent
 
+import environs
+import google.cloud.dialogflow_v2 as dialogflow
+from telegram import ForceReply
+from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
+
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
 )
 
 logger = logging.getLogger(__name__)
@@ -35,7 +35,7 @@ def reply_message(update, context):
             f"message:{update.message.text}, answered: {answer}")
         update.message.reply_text(answer)
     except:
-        logger.exception('detect intent not working')
+        update.message.reply_text(logger.exception('detect intent not working'))
 
 
 def detect_intent_texts(session_id, text, language_code):
@@ -64,9 +64,8 @@ if __name__ == '__main__':
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, reply_message))
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command,
+                                          reply_message))
 
     updater.start_polling()
     updater.idle()
-
-# vk1.a.uSegCWx9N-C3OQeNwuazL4Z3GiNdJ7Ar3zSULRmnraCDCsw_-vC--i3RYtO5Vgfgx8eGnjyjqpOste7RP3P8UTYkambFqMvPenz3yv35gESNWTn_5dd655suNyZ29n7YyJrrpuwhV4qa838_uC05dQ-vasHS1sfo9rWMlF8eRV4cA9KK_xsSBmEZDHCEhsfHWJPd2IPdsG-pCyHd6fi3Dg
