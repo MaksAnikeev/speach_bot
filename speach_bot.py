@@ -68,3 +68,5 @@ if __name__ == '__main__':
 
     updater.start_polling()
     updater.idle()
+
+# vk1.a.uSegCWx9N-C3OQeNwuazL4Z3GiNdJ7Ar3zSULRmnraCDCsw_-vC--i3RYtO5Vgfgx8eGnjyjqpOste7RP3P8UTYkambFqMvPenz3yv35gESNWTn_5dd655suNyZ29n7YyJrrpuwhV4qa838_uC05dQ-vasHS1sfo9rWMlF8eRV4cA9KK_xsSBmEZDHCEhsfHWJPd2IPdsG-pCyHd6fi3Dg
