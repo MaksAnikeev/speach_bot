@@ -32,7 +32,11 @@ def detect_intent_texts(session_id, text, language_code, project_id):
 
     response = session_client.detect_intent(
         session=session, query_input=query_input)
-    answer = response.query_result.fulfillment_text
+    if response.query_result.intent.is_fallback:
+        answer = None
+    else:
+        answer = response.query_result.fulfillment_text
+
     return answer
 
 
@@ -62,8 +66,10 @@ if __name__ == "__main__":
             session_id=session_id,
             project_id=project_id
         )
-
-        send_message(
-            user_id=user_id,
-            text=answer,
-            vk_token=vk_token)
+        if not answer:
+            pass
+        else:
+            send_message(
+                user_id=user_id,
+                text=answer,
+                vk_token=vk_token)
