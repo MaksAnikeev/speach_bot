@@ -2,7 +2,7 @@ import logging
 from textwrap import dedent
 
 import environs
-import google.cloud.dialogflow_v2 as dialogflow
+from dialogflow_functions import detect_intent_texts, logging_config
 from telegram import ForceReply
 from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
 
@@ -26,7 +26,7 @@ def start(update, context):
 def reply_message(update, context):
     try:
         answer = detect_intent_texts(
-            update.message.chat_id, update.message.text, 'ru')
+            update.message.chat_id, update.message.text, 'ru', project_id=project_id)
         logger.info(
             f"message:{update.message.text}, answered: {answer}")
         update.message.reply_text(answer)
@@ -34,26 +34,9 @@ def reply_message(update, context):
         update.message.reply_text(logger.exception('detect intent not working'))
 
 
-def detect_intent_texts(session_id, text, language_code):
-    session_client = dialogflow.SessionsClient()
-    session = session_client.session_path(project_id, session_id)
-
-    text_input = dialogflow.types.TextInput(
-        text=text, language_code=language_code)
-    query_input = dialogflow.types.QueryInput(text=text_input)
-
-    response = session_client.detect_intent(
-        session=session, query_input=query_input)
-    answer = response.query_result.fulfillment_text
-    return answer
-
-
 if __name__ == '__main__':
 
-    logging.basicConfig(
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        level=logging.INFO
-    )
+    logging_config()
 
     env = environs.Env()
     env.read_env()

@@ -2,8 +2,8 @@ import logging
 import random
 
 import environs
-import google.cloud.dialogflow_v2 as dialogflow
 import vk_api as vk
+from dialogflow_functions import detect_intent_texts, logging_config
 from vk_api.longpoll import VkEventType, VkLongPoll
 
 
@@ -20,28 +20,11 @@ def receive_message(vk_token, session_id, project_id):
                 session_id=session_id,
                 text=event.text,
                 language_code='ru',
-                project_id=project_id)
+                project_id=project_id,
+                vk_token=vk_token)
 
             user_id = event.user_id
             return answer, user_id
-
-
-def detect_intent_texts(session_id, text, language_code, project_id):
-    session_client = dialogflow.SessionsClient()
-    session = session_client.session_path(project_id, session_id)
-
-    text_input = dialogflow.types.TextInput(
-        text=text, language_code=language_code)
-    query_input = dialogflow.types.QueryInput(text=text_input)
-
-    response = session_client.detect_intent(
-        session=session, query_input=query_input)
-    if response.query_result.intent.is_fallback:
-        answer = None
-    else:
-        answer = response.query_result.fulfillment_text
-
-    return answer
 
 
 def send_message(user_id, text, vk_token):
@@ -56,10 +39,7 @@ def send_message(user_id, text, vk_token):
 
 if __name__ == "__main__":
 
-    logging.basicConfig(
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        level=logging.INFO
-    )
+    logging_config()
 
     env = environs.Env()
     env.read_env()
