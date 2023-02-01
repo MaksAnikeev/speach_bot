@@ -39,6 +39,19 @@ def send_message(user_id, text, vk_token):
     )
 
 
+def get_vk_id(vk_token):
+    vk_session = vk.VkApi(token=vk_token)
+    longpoll = VkLongPoll(vk_session)
+    text = 'Здравствуйте, о чем бы вы хотели поговорить'
+    for event in longpoll.listen():
+        send_message(
+            user_id=event.user_id,
+            text=text,
+            vk_token=vk_token
+        )
+        return event.user_id
+
+
 if __name__ == "__main__":
 
     logging_config()
@@ -48,7 +61,7 @@ if __name__ == "__main__":
 
     project_id = env.str("PROJECT_ID")
     vk_token = env.str("VK_TOKEN")
-    session_id = random.randint(1, 100000)
+    session_id = f'vk-{get_vk_id(vk_token)}'
 
 
     try:
