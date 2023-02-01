@@ -41,14 +41,14 @@ if __name__ == '__main__':
         url = input()
         response = requests.get(url)
         response.raise_for_status()
-        response_params = response.json()
+        intent_params = response.json()
 
         print('Укажите название намерения без кавычек или если хотите скачать все намерения из файла напишите all')
         choise_display_name = input()
         if choise_display_name == 'all':
-            for display_name, params in response_params.items():
-                answer = response_params[display_name]['answer']
-                questions = response_params[display_name]['questions']
+            for display_name, params in intent_params.items():
+                answer = intent_params[display_name]['answer']
+                questions = intent_params[display_name]['questions']
                 create_intent(
                     project_id=project_id,
                     display_name=display_name,
@@ -57,8 +57,8 @@ if __name__ == '__main__':
             print('Намерения успешно созданы')
         else:
             display_name = choise_display_name
-            answer = response_params[display_name]['answer']
-            questions = response_params[display_name]['questions']
+            answer = intent_params[display_name]['answer']
+            questions = intent_params[display_name]['questions']
             create_intent(
                 project_id=project_id,
                 display_name=display_name,
@@ -70,13 +70,13 @@ if __name__ == '__main__':
         print('Укажите адрес без кавычек где лежит файл .json D:/my_docyments.... '
               'или просто название файла .json, если он лежит в папке с кодом (без расширения):')
         with open(f'{input()}.json', "r", encoding="utf-8") as my_file:
-            response_params = books_params = json.load(my_file)
+            intent_params = json.load(my_file)
         print('Укажите название намерения без кавычек или если хотите скачать все намерения из файла напишите all')
         choise_display_name = input()
         if choise_display_name == 'all':
-            for display_name, params in response_params.items():
-                answer = response_params[display_name]['answer']
-                questions = response_params[display_name]['questions']
+            for display_name, params in intent_params.items():
+                answer = intent_params[display_name]['answer']
+                questions = intent_params[display_name]['questions']
                 create_intent(
                     project_id=project_id,
                     display_name=display_name,
@@ -85,8 +85,8 @@ if __name__ == '__main__':
             print('Намерения успешно созданы')
         else:
             display_name = choise_display_name
-            answer = response_params[display_name]['answer']
-            questions = response_params[display_name]['questions']
+            answer = intent_params[display_name]['answer']
+            questions = intent_params[display_name]['questions']
             create_intent(
                 project_id=project_id,
                 display_name=display_name,
