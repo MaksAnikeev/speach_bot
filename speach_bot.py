@@ -24,14 +24,15 @@ def start(update, context):
 
 
 def reply_message(update, context):
-    try:
-        answer = detect_intent_texts(
-            update.message.chat_id, update.message.text, 'ru', project_id=project_id)
-        logger.info(
-            f"message:{update.message.text}, answered: {answer}")
-        update.message.reply_text(answer)
-    except:
-        update.message.reply_text(logger.exception('detect intent not working'))
+    answer = detect_intent_texts(
+        update.message.chat_id, update.message.text, 'ru', project_id=project_id)
+    logger.info(
+        f"message:{update.message.text}, answered: {answer}")
+    update.message.reply_text(answer)
+
+
+def error(update, context):
+    update.message.reply_text('an error occured')
 
 
 if __name__ == '__main__':
@@ -51,6 +52,7 @@ if __name__ == '__main__':
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command,
                                           reply_message))
+    dispatcher.add_error_handler(error)
 
     updater.start_polling()
     updater.idle()
