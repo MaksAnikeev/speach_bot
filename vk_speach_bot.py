@@ -23,8 +23,7 @@ def receive_message(vk_token, session_id, project_id):
                 project_id=project_id,
                 vk_token=vk_token)
 
-            user_id = event.user_id
-            return answer, user_id
+            return answer, event.user_id
 
 
 def send_message(user_id, text, vk_token):
@@ -49,25 +48,16 @@ if __name__ == "__main__":
     session_id = '1234567'
 
     while True:
-        try:
-            answer, user_id = receive_message(
-                vk_token=vk_token,
-                session_id=session_id,
-                project_id=project_id
-            )
-            if not answer:
-                pass
-            else:
-                send_message(
-                    user_id=user_id,
-                    text=answer,
-                    vk_token=vk_token)
-        except:
-            vk_session = vk.VkApi(token=vk_token)
-            longpoll = VkLongPoll(vk_session)
-            for event in longpoll.listen():
-                user_id = event.user_id
+
+        answer, user_id = receive_message(
+            vk_token=vk_token,
+            session_id=session_id,
+            project_id=project_id
+        )
+        if not answer:
+            pass
+        else:
             send_message(
                 user_id=user_id,
-                text=logger.exception('detect intent not working'),
+                text=answer,
                 vk_token=vk_token)
