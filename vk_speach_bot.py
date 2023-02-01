@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 def receive_message(vk_token, session_id, project_id):
     vk_session = vk.VkApi(token=vk_token)
     longpoll = VkLongPoll(vk_session)
-
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
             answer = detect_intent_texts(
@@ -49,7 +48,8 @@ if __name__ == "__main__":
 
     project_id = env.str("PROJECT_ID")
     vk_token = env.str("VK_TOKEN")
-    session_id = '1234567'
+    session_id = random.randint(1, 100000)
+
 
     try:
         receive_message(

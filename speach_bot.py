@@ -26,7 +26,7 @@ def start(update, context):
 
 def reply_message(update, context, project_id):
     answer = detect_intent_texts(
-        update.message.chat_id, update.message.text, 'ru', project_id=project_id)
+        f'tg-{update.message.chat_id}', update.message.text, 'ru', project_id=project_id)
     logger.info(
         f"message:{update.message.text}, answered: {answer}")
     update.message.reply_text(answer)
