@@ -6,10 +6,6 @@ import google.cloud.dialogflow_v2 as dialogflow
 import vk_api as vk
 from vk_api.longpoll import VkEventType, VkLongPoll
 
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +55,12 @@ def send_message(user_id, text, vk_token):
 
 
 if __name__ == "__main__":
+
+    logging.basicConfig(
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        level=logging.INFO
+    )
+
     env = environs.Env()
     env.read_env()
 
