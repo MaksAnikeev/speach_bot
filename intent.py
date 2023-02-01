@@ -1,6 +1,7 @@
 import environs
 import google.cloud.dialogflow_v2 as dialogflow
 import requests
+import json
 
 
 def create_intent(project_id, display_name, training_phrases_parts, message_texts):
@@ -25,7 +26,6 @@ def create_intent(project_id, display_name, training_phrases_parts, message_text
     response = intents_client.create_intent(
         request={"parent": parent, "intent": intent}
     )
-    print("Intent created: {}".format(response))
 
 
 if __name__ == '__main__':
@@ -34,16 +34,64 @@ if __name__ == '__main__':
 
     project_id = env.str("PROJECT_ID")
     GOOGLE_APPLICATION_CREDENTIALS = env.str("GOOGLE_APPLICATION_CREDENTIALS")
-    url = "https://dvmn.org/media/filer_public/a7/db/a7db66c0-1259-4dac-9726-2d1fa9c44f20/questions.json"
-    response = requests.get(url)
-    response.raise_for_status()
-    response_params = response.json()
+    print('Выберите откуда скачивать файл с данными (.json). 1 - с сервера, 2 - с локального компьютера')
+    choise_direction = int(input())
+    if choise_direction == 1:
+        print('Укажите url адрес без кавычек https://dvmn.org/media/fil....:')
+        url = input()
+        response = requests.get(url)
+        response.raise_for_status()
+        response_params = response.json()
 
-    display_name = 'Устройство на работу'
-    answer = response_params[display_name]['answer']
-    questions = response_params[display_name]['questions']
-    create_intent(
-        project_id=project_id,
-        display_name=display_name,
-        training_phrases_parts=questions,
-        message_texts=answer)
+        print('Укажите название намерения без кавычек или если хотите скачать все намерения из файла напишите all')
+        choise_display_name = input()
+        if choise_display_name == 'all':
+            for display_name, params in response_params.items():
+                answer = response_params[display_name]['answer']
+                questions = response_params[display_name]['questions']
+                create_intent(
+                    project_id=project_id,
+                    display_name=display_name,
+                    training_phrases_parts=questions,
+                    message_texts=answer)
+            print('Намерения успешно созданы')
+        else:
+            display_name = choise_display_name
+            answer = response_params[display_name]['answer']
+            questions = response_params[display_name]['questions']
+            create_intent(
+                project_id=project_id,
+                display_name=display_name,
+                training_phrases_parts=questions,
+                message_texts=answer)
+            print('Намерение успешно создано')
+
+    elif choise_direction == 2:
+        print('Укажите адрес без кавычек где лежит файл .json D:/my_docyments.... '
+              'или просто название файла .json, если он лежит в папке с кодом (без расширения):')
+        with open(f'{input()}.json', "r", encoding="utf-8") as my_file:
+            response_params = books_params = json.load(my_file)
+        print('Укажите название намерения без кавычек или если хотите скачать все намерения из файла напишите all')
+        choise_display_name = input()
+        if choise_display_name == 'all':
+            for display_name, params in response_params.items():
+                answer = response_params[display_name]['answer']
+                questions = response_params[display_name]['questions']
+                create_intent(
+                    project_id=project_id,
+                    display_name=display_name,
+                    training_phrases_parts=questions,
+                    message_texts=answer)
+            print('Намерения успешно созданы')
+        else:
+            display_name = choise_display_name
+            answer = response_params[display_name]['answer']
+            questions = response_params[display_name]['questions']
+            create_intent(
+                project_id=project_id,
+                display_name=display_name,
+                training_phrases_parts=questions,
+                message_texts=answer)
+            print('Намерение успешно создано')
+    else:
+        print('Вы ввели некорректную цифру. Попробуйте заново')
