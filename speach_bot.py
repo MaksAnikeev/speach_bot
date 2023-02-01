@@ -5,6 +5,7 @@ import environs
 from dialogflow_functions import detect_intent_texts, logging_config
 from telegram import ForceReply
 from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
+from functools import partial
 
 
 logger = logging.getLogger(__name__)
@@ -23,7 +24,7 @@ def start(update, context):
     )
 
 
-def reply_message(update, context):
+def reply_message(update, context, project_id):
     answer = detect_intent_texts(
         update.message.chat_id, update.message.text, 'ru', project_id=project_id)
     logger.info(
@@ -44,14 +45,13 @@ if __name__ == '__main__':
 
     telegram_bot_token = env.str("TG_BOT_TOKEN")
     project_id = env.str("PROJECT_ID")
-    GOOGLE_APPLICATION_CREDENTIALS = env.str("GOOGLE_APPLICATION_CREDENTIALS")
 
     updater = Updater(telegram_bot_token, use_context=True)
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command,
-                                          reply_message))
+                                          partial(reply_message, project_id=project_id)))
     dispatcher.add_error_handler(error)
 
     updater.start_polling()
