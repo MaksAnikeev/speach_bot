@@ -52,8 +52,8 @@ if __name__ == '__main__':
         intent_params = response.json()
 
     elif args.json:
-        with open(f'{args.json}.json', "r", encoding="utf-8") as my_file:
-            intent_params = json.load(my_file)
+        with open(f'{args.json}.json', "r", encoding="utf-8") as intent_file:
+            intent_params = json.load(intent_file)
     else:
         print('Необходимо ввести либо --url, либо --json, введите -h, для просмотра справки')
 
