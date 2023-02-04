@@ -2,7 +2,7 @@ import logging
 from textwrap import dedent
 
 import environs
-from dialogflow import detect_intent_texts, logging_config
+from dialogflow import detect_intent_texts
 from telegram import ForceReply
 from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
 from functools import partial
@@ -38,7 +38,10 @@ def error(update, context):
 
 if __name__ == '__main__':
 
-    logging_config()
+    logging.basicConfig(
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        level=logging.INFO
+    )
 
     env = environs.Env()
     env.read_env()

@@ -3,7 +3,7 @@ import random
 
 import environs
 import vk_api as vk
-from dialogflow import detect_intent_texts, logging_config
+from dialogflow import detect_intent_texts
 from vk_api.longpoll import VkEventType, VkLongPoll
 
 
@@ -52,7 +52,11 @@ def get_vk_id(vk_token):
 
 
 if __name__ == "__main__":
-    logging_config()
+
+    logging.basicConfig(
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        level=logging.INFO
+    )
 
     env = environs.Env()
     env.read_env()
