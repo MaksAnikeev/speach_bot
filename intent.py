@@ -1,3 +1,4 @@
+import argparse
 import environs
 import google.cloud.dialogflow_v2 as dialogflow
 import requests
@@ -32,19 +33,26 @@ if __name__ == '__main__':
     env = environs.Env()
     env.read_env()
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--url',
+                        help='url адрес без кавычек https://dvmn.org/media/fil....:')
+    parser.add_argument('intent',
+                        type=str,
+                        help='название намерения в кавычках или если хотите скачать все намерения из файла напишите "all"')
+    parser.add_argument('--json',
+                        # type=int,
+                        help='адрес без кавычек где лежит файл .json D:/my_docyments.... '
+                             'или просто название файла .json, если он лежит в папке с кодом (без расширения)')
+    args = parser.parse_args()
+
     project_id = env.str("PROJECT_ID")
-    print('Выберите откуда скачивать файл с данными (.json). 1 - с сервера, 2 - с локального компьютера')
-    choise_direction = int(input())
-    if choise_direction == 1:
-        print('Укажите url адрес без кавычек https://dvmn.org/media/fil....:')
-        url = input()
-        response = requests.get(url)
+
+    if args.url:
+        response = requests.get(args.url)
         response.raise_for_status()
         intent_params = response.json()
 
-        print('Укажите название намерения без кавычек или если хотите скачать все намерения из файла напишите all')
-        choise_display_name = input()
-        if choise_display_name == 'all':
+        if args.intent == 'all':
             for display_name, params in intent_params.items():
                 answer = intent_params[display_name]['answer']
                 questions = intent_params[display_name]['questions']
@@ -55,7 +63,7 @@ if __name__ == '__main__':
                     message_texts=answer)
             print('Намерения успешно созданы')
         else:
-            display_name = choise_display_name
+            display_name = args.intent
             answer = intent_params[display_name]['answer']
             questions = intent_params[display_name]['questions']
             create_intent(
@@ -65,14 +73,10 @@ if __name__ == '__main__':
                 message_texts=answer)
             print('Намерение успешно создано')
 
-    elif choise_direction == 2:
-        print('Укажите адрес без кавычек где лежит файл .json D:/my_docyments.... '
-              'или просто название файла .json, если он лежит в папке с кодом (без расширения):')
-        with open(f'{input()}.json', "r", encoding="utf-8") as my_file:
+    elif args.json:
+        with open(f'{args.json}.json', "r", encoding="utf-8") as my_file:
             intent_params = json.load(my_file)
-        print('Укажите название намерения без кавычек или если хотите скачать все намерения из файла напишите all')
-        choise_display_name = input()
-        if choise_display_name == 'all':
+        if args.intent == 'all':
             for display_name, params in intent_params.items():
                 answer = intent_params[display_name]['answer']
                 questions = intent_params[display_name]['questions']
@@ -83,7 +87,7 @@ if __name__ == '__main__':
                     message_texts=answer)
             print('Намерения успешно созданы')
         else:
-            display_name = choise_display_name
+            display_name = args.intent
             answer = intent_params[display_name]['answer']
             questions = intent_params[display_name]['questions']
             create_intent(
@@ -93,4 +97,4 @@ if __name__ == '__main__':
                 message_texts=answer)
             print('Намерение успешно создано')
     else:
-        print('Вы ввели некорректную цифру. Попробуйте заново')
+        print('Необходимо ввести либо --url, либо --json, введите -h, для просмотра справки')
