@@ -3,7 +3,7 @@ import random
 
 import environs
 import vk_api as vk
-from dialogflow_functions import detect_intent_texts, logging_config
+from dialogflow import detect_intent_texts, logging_config
 from vk_api.longpoll import VkEventType, VkLongPoll
 
 

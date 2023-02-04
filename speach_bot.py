@@ -2,7 +2,7 @@ import logging
 from textwrap import dedent
 
 import environs
-from dialogflow_functions import detect_intent_texts, logging_config
+from dialogflow import detect_intent_texts, logging_config
 from telegram import ForceReply
 from telegram.ext import CommandHandler, Filters, MessageHandler, Updater
 from functools import partial
