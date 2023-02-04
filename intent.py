@@ -40,9 +40,8 @@ if __name__ == '__main__':
                         type=str,
                         help='название намерения в кавычках или если хотите скачать все намерения из файла напишите "all"')
     parser.add_argument('--json',
-                        # type=int,
-                        help='адрес без кавычек где лежит файл .json D:/my_docyments.... '
-                             'или просто название файла .json, если он лежит в папке с кодом (без расширения)')
+                        help='адрес в кавычках где лежит файл .json D:/my_docyments.... '
+                             'или просто название файла .json в кавычках, если он лежит в папке с кодом (без расширения)')
     args = parser.parse_args()
 
     project_id = env.str("PROJECT_ID")
@@ -52,42 +51,25 @@ if __name__ == '__main__':
         response.raise_for_status()
         intent_params = response.json()
 
-        if args.intent == 'all':
-            for display_name, params in intent_params.items():
-                answer = intent_params[display_name]['answer']
-                questions = intent_params[display_name]['questions']
-                create_intent(
-                    project_id=project_id,
-                    display_name=display_name,
-                    training_phrases_parts=questions,
-                    message_texts=answer)
-            print('Намерения успешно созданы')
-        else:
-            display_name = args.intent
-            answer = intent_params[display_name]['answer']
-            questions = intent_params[display_name]['questions']
-            create_intent(
-                project_id=project_id,
-                display_name=display_name,
-                training_phrases_parts=questions,
-                message_texts=answer)
-            print('Намерение успешно создано')
-
     elif args.json:
         with open(f'{args.json}.json', "r", encoding="utf-8") as my_file:
             intent_params = json.load(my_file)
-        if args.intent == 'all':
-            for display_name, params in intent_params.items():
-                answer = intent_params[display_name]['answer']
-                questions = intent_params[display_name]['questions']
-                create_intent(
-                    project_id=project_id,
-                    display_name=display_name,
-                    training_phrases_parts=questions,
-                    message_texts=answer)
-            print('Намерения успешно созданы')
-        else:
-            display_name = args.intent
+    else:
+        print('Необходимо ввести либо --url, либо --json, введите -h, для просмотра справки')
+
+    if not args.intent == 'all':
+        display_name = args.intent
+        answer = intent_params[display_name]['answer']
+        questions = intent_params[display_name]['questions']
+        intent_params = {
+            display_name: {
+                "questions": questions,
+                "answer": answer
+            }
+        }
+
+    if args.json or args.url:
+        for display_name in intent_params:
             answer = intent_params[display_name]['answer']
             questions = intent_params[display_name]['questions']
             create_intent(
@@ -95,6 +77,4 @@ if __name__ == '__main__':
                 display_name=display_name,
                 training_phrases_parts=questions,
                 message_texts=answer)
-            print('Намерение успешно создано')
-    else:
-        print('Необходимо ввести либо --url, либо --json, введите -h, для просмотра справки')
+        print('Намерения успешно созданы')
