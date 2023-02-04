@@ -15,14 +15,13 @@ def receive_message(vk_token, session_id, project_id):
     longpoll = VkLongPoll(vk_session)
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-            answer = detect_intent_texts(
+            answer, fallback = detect_intent_texts(
                 session_id=session_id,
                 text=event.text,
                 language_code='ru',
-                project_id=project_id,
-                vk_token=vk_token
+                project_id=project_id
             )
-            if answer:
+            if not fallback:
                 send_message(
                     user_id=event.user_id,
                     text=answer,
@@ -53,7 +52,6 @@ def get_vk_id(vk_token):
 
 
 if __name__ == "__main__":
-
     logging_config()
 
     env = environs.Env()
