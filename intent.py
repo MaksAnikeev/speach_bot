@@ -33,7 +33,6 @@ if __name__ == '__main__':
     env.read_env()
 
     project_id = env.str("PROJECT_ID")
-    GOOGLE_APPLICATION_CREDENTIALS = env.str("GOOGLE_APPLICATION_CREDENTIALS")
     print('Выберите откуда скачивать файл с данными (.json). 1 - с сервера, 2 - с локального компьютера')
     choise_direction = int(input())
     if choise_direction == 1:
