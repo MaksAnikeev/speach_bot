@@ -10,13 +10,13 @@ from vk_api.longpoll import VkEventType, VkLongPoll
 logger = logging.getLogger(__name__)
 
 
-def receive_message(vk_token, session_id, project_id):
+def receive_message(vk_token, project_id):
     vk_session = vk.VkApi(token=vk_token)
     longpoll = VkLongPoll(vk_session)
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me:
             answer, fallback = detect_intent_texts(
-                session_id=session_id,
+                session_id=f'vk-{event.user_id}',
                 text=event.text,
                 language_code='ru',
                 project_id=project_id
@@ -38,13 +38,6 @@ def send_message(user_id, text, vk_token):
     )
 
 
-def get_vk_id(vk_token):
-    vk_session = vk.VkApi(token=vk_token)
-    longpoll = VkLongPoll(vk_session)
-    for event in longpoll.listen():
-        return event.user_id
-
-
 if __name__ == "__main__":
 
     logging.basicConfig(
@@ -57,12 +50,10 @@ if __name__ == "__main__":
 
     project_id = env.str("PROJECT_ID")
     vk_token = env.str("VK_TOKEN")
-    session_id = f'vk-{get_vk_id(vk_token)}'
 
     try:
         receive_message(
                 vk_token=vk_token,
-                session_id=session_id,
                 project_id=project_id
         )
 
